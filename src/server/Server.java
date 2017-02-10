@@ -5,6 +5,19 @@
  */
 package server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.commons.codec.digest.DigestUtils;
+
 /**
  *
  * @author Audi
@@ -15,7 +28,60 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        Date d = new Date();
+        String jamskrg = sdf.format(d);
+
+        ServerSocket ss;
+        int port = 8888;
+        try {
+            ss = new ServerSocket(port);
+            System.out.println("Server started | " + jamskrg);
+            while (true) {
+                Socket incoming = ss.accept();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            handleSocket(incoming);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }).start();
+            }
+        } catch (IOException ex) {
+            System.out.println("Server already started");
+        }
     }
-    
+
+    private static void handleSocket(Socket incoming) throws IOException {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+        Date d = new Date();
+        String haritanggalskrg = sdf.format(d);
+        //Input -> Nerima
+        //Output -> Ngasi
+
+        //Input
+        BufferedReader input = new BufferedReader(new InputStreamReader(incoming.getInputStream()));
+
+        //Output
+        PrintStream output = new PrintStream(incoming.getOutputStream());
+        
+        DatabaseServer ds = new DatabaseServer();
+
+        String jenisdata = input.readLine();
+        if (jenisdata.equalsIgnoreCase("login")) {
+            String username = input.readLine();
+            String passwordmd5 = DigestUtils.md5Hex(input.readLine());
+            if (ds.Login(username, passwordmd5)) {
+                output.println(true);
+                output.println(ds.iduser);
+                output.println(ds.tipeuser);
+                ds.insertLog(ds.iduser, "Sukses Login ke server", haritanggalskrg);
+            } else {
+                output.println(false);
+            }
+        }
+    }
 }
