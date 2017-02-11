@@ -18,6 +18,7 @@ import java.sql.SQLException;
 public class DatabaseServer {
 
     String iduser;
+    String namauser;
     String tipeuser;
 
     public void insertLog(String id, String event, String waktu) {
@@ -57,9 +58,37 @@ public class DatabaseServer {
                 ResultSet hasil = sql.executeQuery();
                 if (hasil.next()) {
                     iduser = hasil.getString("id");
+                    namauser = hasil.getString("username");
                     tipeuser = hasil.getString("status");
                     status = true;
                 }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
+    }
+
+    public boolean insertKegiatan(String noinduk, String kegiatan, String tanggal) {
+        boolean status = false;
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "insert into kegiatan (id_anggota,kegiatan,tanggal) values('" + noinduk + "','" + kegiatan + "','" + tanggal + "')"
+                );
+
+                int a = sql.executeUpdate();
+                status = true;
             }
         } catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());

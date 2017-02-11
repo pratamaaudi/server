@@ -77,10 +77,21 @@ public class Server {
             if (ds.Login(username, passwordmd5)) {
                 output.println(true);
                 output.println(ds.iduser);
+                output.println(ds.namauser);
                 output.println(ds.tipeuser);
                 ds.insertLog(ds.iduser, "Sukses Login ke server", haritanggalskrg);
             } else {
                 output.println(false);
+            }
+            
+        }
+        if (jenisdata.equalsIgnoreCase("insertkegiatan")) {
+            String noinduk = input.readLine();
+            String kegiatan = input.readLine();
+            String tanggal = input.readLine();
+            if(ds.insertKegiatan(noinduk, kegiatan, tanggal)){
+                output.println(true);
+                ds.insertLog(ds.iduser, "Menambahkan kegiatan ke server", haritanggalskrg);
             }
         }
     }
