@@ -106,5 +106,15 @@ public class Server {
                 }
             }
         }
+        if (jenisdata.equalsIgnoreCase("menulog")) {
+            ArrayList<Log> list = new ArrayList<>(ds.AmbilDataLogMenuAdmin());
+            int sizeArray = list.size();
+            output.println(sizeArray);
+            for (int i = 0; i < sizeArray; i++) {
+                output.println(list.get(i).getNama());
+                output.println(list.get(i).getEvent());
+                output.println(list.get(i).getWaktu());
+            }
+        }
     }
 }
