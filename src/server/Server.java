@@ -56,7 +56,7 @@ public class Server {
     }
 
     private static void handleSocket(Socket incoming) throws IOException {
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-mm-yyyy hh:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
         Date d = new Date();
         String haritanggalskrg = sdf.format(d);
         //Input -> Nerima
@@ -107,7 +107,20 @@ public class Server {
             }
         }
         if (jenisdata.equalsIgnoreCase("menulog")) {
-            ArrayList<Log> list = new ArrayList<>(ds.AmbilDataLogMenuAdmin());
+            ArrayList<Log> list = new ArrayList<>(ds.Ambil12DataLogMenuAdmin());
+            int sizeArray = list.size();
+            output.println(sizeArray);
+            for (int i = 0; i < sizeArray; i++) {
+                output.println(list.get(i).getNama());
+                output.println(list.get(i).getEvent());
+                output.println(list.get(i).getWaktu());
+            }
+        }
+        if (jenisdata.equalsIgnoreCase("tanggallog")) {
+            String tanggal = input.readLine();
+            String bulan = input.readLine();
+            String tahun = input.readLine();
+            ArrayList<Log> list = new ArrayList<>(ds.AmbilDataLogDenganTanggal(tanggal, bulan, tahun));
             int sizeArray = list.size();
             output.println(sizeArray);
             for (int i = 0; i < sizeArray; i++) {
