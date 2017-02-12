@@ -102,4 +102,59 @@ public class DatabaseServer {
         }
         return status;
     }
+
+    public boolean CekPassword(String iduser, String passwordlamamd5) {
+        boolean status = false;
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "select * from login where id='" + iduser + "' and password='" + passwordlamamd5 + "'"
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    status = true;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
+    }
+
+    public boolean updatePassword(String iduser, String passwordbarumd5) {
+        boolean status = false;
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "update login set password='" + passwordbarumd5 + "'where id=" + iduser
+                );
+
+                int a = sql.executeUpdate();
+                status = true;
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
+    }
 }

@@ -67,7 +67,7 @@ public class Server {
 
         //Output
         PrintStream output = new PrintStream(incoming.getOutputStream());
-        
+
         DatabaseServer ds = new DatabaseServer();
 
         String jenisdata = input.readLine();
@@ -83,15 +83,27 @@ public class Server {
             } else {
                 output.println(false);
             }
-            
+
         }
         if (jenisdata.equalsIgnoreCase("insertkegiatan")) {
             String noinduk = input.readLine();
             String kegiatan = input.readLine();
             String tanggal = input.readLine();
-            if(ds.insertKegiatan(noinduk, kegiatan, tanggal)){
+            if (ds.insertKegiatan(noinduk, kegiatan, tanggal)) {
                 output.println(true);
                 ds.insertLog(ds.iduser, "Menambahkan kegiatan ke server", haritanggalskrg);
+            }
+        }
+        if (jenisdata.equalsIgnoreCase("gantipassword")) {
+            String iduser = input.readLine();
+            String passwordlamamd5 = DigestUtils.md5Hex(input.readLine());
+            if (ds.CekPassword(iduser, passwordlamamd5)) {
+                output.println(true);
+                String passwordbarumd5 = DigestUtils.md5Hex(input.readLine());
+                if (ds.updatePassword(iduser, passwordbarumd5)) {
+                    output.println(true);
+                    ds.insertLog(ds.iduser, "Berhasil mengganti password", haritanggalskrg);
+                }
             }
         }
     }
