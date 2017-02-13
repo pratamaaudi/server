@@ -129,5 +129,24 @@ public class Server {
                 output.println(list.get(i).getWaktu());
             }
         }
+        if (jenisdata.equalsIgnoreCase("datahakspesial")) {
+            String noinduk = input.readLine();
+            if(ds.AmbilNamaDanStatusHakAksesDenganNoInduk(noinduk)){
+                output.println(true);
+                output.println(ds.namaHakakses);
+                output.println(ds.hakspesial);
+            } else {
+                output.println(false);
+            }
+        }
+        if (jenisdata.equalsIgnoreCase("updatehakspesial")) {
+            String noinduk = input.readLine();
+            String pilihan = input.readLine();
+            if(ds.updateHakAkses(noinduk, pilihan)){
+                output.println(true);
+            } else {
+                output.println(false);
+            }
+        }
     }
 }

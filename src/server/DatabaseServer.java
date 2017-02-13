@@ -22,6 +22,9 @@ public class DatabaseServer {
     String namauser;
     String tipeuser;
 
+    public String namaHakakses;
+    public String hakspesial;
+
     public void insertLog(String id, String event, String waktu) {
         Connection myCon = null;
         try {
@@ -190,6 +193,7 @@ public class DatabaseServer {
         }
         return list;
     }
+
     public ArrayList AmbilDataLogDenganTanggal(String tanggal, String bulan, String tahun) {
         ArrayList list = new ArrayList<>();
         Connection myCon = null;
@@ -198,7 +202,7 @@ public class DatabaseServer {
             myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
             if (!myCon.isClosed()) {
                 PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
-                        "SELECT anggota.nama,log.event,log.waktu FROM log inner join anggota on log.id_anggota=anggota.id WHERE waktu like '"+tanggal+"-"+bulan+"-"+tahun+"%' order by waktu desc"
+                        "SELECT anggota.nama,log.event,log.waktu FROM log inner join anggota on log.id_anggota=anggota.id WHERE waktu like '" + tanggal + "-" + bulan + "-" + tahun + "%' order by waktu desc"
                 );
                 ResultSet hasil = sql.executeQuery();
                 while (hasil.next()) {
@@ -220,5 +224,91 @@ public class DatabaseServer {
             }
         }
         return list;
+    }
+
+    public boolean AmbilNamaDanStatusHakAksesDenganNoInduk(String noinduk) {
+        boolean status = false;
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "SELECT anggota.nama, login.hakspesial FROM anggota inner join login on anggota.id=login.id where anggota.noinduk=" + noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    namaHakakses = hasil.getString("nama");
+                    hakspesial = hasil.getString("hakspesial");
+                    status = true;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
+    }
+
+    public boolean updateHakAkses(String noinduk, String pilihan) {
+        boolean status = false;
+        String iduser = "";
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "SELECT login.id FROM login inner join anggota on login.id = anggota.id WHERE anggota.noinduk=" + noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    iduser = hasil.getString("id");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        String beriatocabut = "";
+        if (pilihan.equalsIgnoreCase("beri")) {
+            beriatocabut = "1";
+        } else if (pilihan.equalsIgnoreCase("cabut")) {
+            beriatocabut = "0";
+        }
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "update login set hakspesial='" + beriatocabut + "'where id=" + iduser
+                );
+
+                int a = sql.executeUpdate();
+                status = true;
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
     }
 }
