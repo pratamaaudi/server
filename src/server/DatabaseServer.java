@@ -83,12 +83,35 @@ public class DatabaseServer {
     public boolean insertKegiatan(String noinduk, String kegiatan, String tanggal) {
         boolean status = false;
         Connection myCon = null;
+        String iduser = "";
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
             if (!myCon.isClosed()) {
                 PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
-                        "insert into kegiatan (id_anggota,kegiatan,tanggal) values('" + noinduk + "','" + kegiatan + "','" + tanggal + "')"
+                        "SELECT login.id FROM login inner join anggota on login.id = anggota.id WHERE anggota.noinduk=" + noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    iduser = hasil.getString("id");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "insert into kegiatan (id_anggota,kegiatan,tanggal) values('" + iduser + "','" + kegiatan + "','" + tanggal + "')"
                 );
 
                 int a = sql.executeUpdate();
@@ -310,5 +333,33 @@ public class DatabaseServer {
             }
         }
         return status;
+    }
+    
+    public String getNamaByNoInduk(String noinduk) {
+        String namaUser = "";
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "select anggota.nama from anggota where anggota.noinduk="+noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    namaUser = hasil.getString("nama");
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return namaUser;
     }
 }
