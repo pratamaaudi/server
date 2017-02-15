@@ -86,12 +86,13 @@ public class Server {
 
         }
         if (jenisdata.equalsIgnoreCase("insertkegiatan")) {
+            String iduser = input.readLine();
             String noinduk = input.readLine();
             String kegiatan = input.readLine();
             String tanggal = input.readLine();
             if (ds.insertKegiatan(noinduk, kegiatan, tanggal)) {
                 output.println(true);
-                ds.insertLog(ds.iduser, "Menambahkan kegiatan ke server", haritanggalskrg);
+                ds.insertLog(iduser, "Menambahkan kegiatan ke server", haritanggalskrg);
             }
         }
         if (jenisdata.equalsIgnoreCase("gantipassword")) {
@@ -102,7 +103,7 @@ public class Server {
                 String passwordbarumd5 = DigestUtils.md5Hex(input.readLine());
                 if (ds.updatePassword(iduser, passwordbarumd5)) {
                     output.println(true);
-                    ds.insertLog(ds.iduser, "Berhasil mengganti password", haritanggalskrg);
+                    ds.insertLog(iduser, "Berhasil mengganti password", haritanggalskrg);
                 }
             }
         }
@@ -152,6 +153,28 @@ public class Server {
                 }
             } else {
                 output.println(false);
+            }
+        }
+        if (jenisdata.equalsIgnoreCase("datadiridikit")) {
+            String noinduk = input.readLine();
+            if (ds.AmbilDataDiriDikitDenganNoInduk(noinduk)) {
+                output.println(ds.nik);
+                output.println(ds.nama);
+                output.println(ds.alias);
+                output.println(ds.alamat);
+                output.println(ds.jeniskelamin);
+                output.println(ds.tanggallahir);
+            } else {
+            }
+        }
+        if (jenisdata.equalsIgnoreCase("datakegiatan")) {
+            String noinduk = input.readLine();
+            ArrayList<Kegiatan> list = new ArrayList<>(ds.AmbilDataKegiatan(noinduk));
+            int sizeArray = list.size();
+            output.println(sizeArray);
+            for (int i = 0; i < sizeArray; i++) {
+                output.println(list.get(i).getNamakegiatan());
+                output.println(list.get(i).getTanggal());
             }
         }
     }

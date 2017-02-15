@@ -18,12 +18,20 @@ import java.util.ArrayList;
  */
 public class DatabaseServer {
 
+    //untuk login , data dipake client buat perpindahan form, nama di menu, id untuk input log per user
     String iduser;
     String namauser;
     String tipeuser;
-
+    //untuk form pengaturan hakakses
     public String namaHakakses;
     public String hakspesial;
+    //untuk data diri di form pencarian
+    public String nik;
+    public String nama;
+    public String alias;
+    public String alamat;
+    public String jeniskelamin;
+    public String tanggallahir;
 
     public void insertLog(String id, String event, String waktu) {
         Connection myCon = null;
@@ -361,5 +369,69 @@ public class DatabaseServer {
             }
         }
         return nama;
+    }
+    public boolean AmbilDataDiriDikitDenganNoInduk(String noinduk) {
+        boolean status = false;
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "SELECT anggota.noinduk,anggota.nama,anggota.alias,anggota.alamat,anggota.jeniskelamin,anggota.tanggallahir FROM anggota where anggota.noinduk=" + noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    nik = hasil.getString("noinduk");
+                    nama = hasil.getString("nama");
+                    alias = hasil.getString("alias");
+                    alamat = hasil.getString("alamat");
+                    jeniskelamin = hasil.getString("jeniskelamin");
+                    tanggallahir = hasil.getString("tanggallahir");
+                    status = true;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return status;
+    }
+    
+    public ArrayList AmbilDataKegiatan(String noinduk) {
+        ArrayList list = new ArrayList<>();
+        Connection myCon = null;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+            myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
+            if (!myCon.isClosed()) {
+                PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+                        "select kegiatan.kegiatan, kegiatan.tanggal from kegiatan inner join anggota on kegiatan.id_anggota=anggota.id where anggota.noinduk="+noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                while (hasil.next()) {
+                    Kegiatan k = new Kegiatan();
+                    k.setNamakegiatan(hasil.getString("kegiatan"));
+                    k.setTanggal(hasil.getString("tanggal"));
+                    list.add(k);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Exception: " + e.getMessage());
+        } finally {
+            try {
+                if (myCon != null) {
+                    myCon.close();
+                }
+            } catch (SQLException e) {
+            }
+        }
+        return list;
     }
 }
