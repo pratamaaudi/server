@@ -145,11 +145,19 @@ public class Server {
             String pilihan = input.readLine();
             if (ds.updateHakAkses(noinduk, pilihan)) {
                 output.println(true);
+<<<<<<< HEAD
                 if (pilihan.equalsIgnoreCase("beri")) {
                     ds.insertLog(iduser, "Pemberian hak akses spesial kepada "+ds.getNamaByNoInduk(noinduk), haritanggalskrg);
                 } else if (pilihan.equalsIgnoreCase("cabut")) {
                     ds.insertLog(iduser, "Pencabutan hak akses spesial kepada "+ds.getNamaByNoInduk(noinduk), haritanggalskrg);
                 }
+=======
+                /*if (pilihan.equalsIgnoreCase("beri")) {
+                    ds.insertLog(iduser, "Pemberian hak akses spesial kepada " + ds.getNamaByNoInduk(noinduk), haritanggalskrg);
+                } else if (pilihan.equalsIgnoreCase("cabut")) {
+                    ds.insertLog(iduser, "Pencabutan hak akses spesial kepada " + ds.getNamaByNoInduk(noinduk), haritanggalskrg);
+                }*/
+>>>>>>> origin/master
             } else {
                 output.println(false);
             }

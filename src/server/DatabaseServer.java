@@ -336,18 +336,30 @@ public class DatabaseServer {
     }
     
     public String getNamaByNoInduk(String noinduk) {
+<<<<<<< HEAD
         String nama = "";
+=======
+        String namaUser = "";
+>>>>>>> origin/master
         Connection myCon = null;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
             myCon = DriverManager.getConnection("jdbc:mysql://localhost:3306/programpendataan", "root", "");
             if (!myCon.isClosed()) {
                 PreparedStatement sql = (PreparedStatement) myCon.prepareStatement(
+<<<<<<< HEAD
                         "select anggota.nama from anggota where anggota.noinduk=" + noinduk
                 );
                 ResultSet hasil = sql.executeQuery();
                 if (hasil.next()) {
                     nama = hasil.getString("nama");
+=======
+                        "select anggota.nama from anggota where anggota.noinduk="+noinduk
+                );
+                ResultSet hasil = sql.executeQuery();
+                if (hasil.next()) {
+                    namaUser = hasil.getString("nama");
+>>>>>>> origin/master
                 }
             }
         } catch (Exception e) {
@@ -360,6 +372,10 @@ public class DatabaseServer {
             } catch (SQLException e) {
             }
         }
+<<<<<<< HEAD
         return nama;
+=======
+        return namaUser;
+>>>>>>> origin/master
     }
 }
