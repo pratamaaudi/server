@@ -131,7 +131,7 @@ public class Server {
         }
         if (jenisdata.equalsIgnoreCase("datahakspesial")) {
             String noinduk = input.readLine();
-            if(ds.AmbilNamaDanStatusHakAksesDenganNoInduk(noinduk)){
+            if (ds.AmbilNamaDanStatusHakAksesDenganNoInduk(noinduk)) {
                 output.println(true);
                 output.println(ds.namaHakakses);
                 output.println(ds.hakspesial);
@@ -140,10 +140,16 @@ public class Server {
             }
         }
         if (jenisdata.equalsIgnoreCase("updatehakspesial")) {
+            String iduser = input.readLine();
             String noinduk = input.readLine();
             String pilihan = input.readLine();
-            if(ds.updateHakAkses(noinduk, pilihan)){
+            if (ds.updateHakAkses(noinduk, pilihan)) {
                 output.println(true);
+                if (pilihan.equalsIgnoreCase("beri")) {
+                    ds.insertLog(iduser, "Pemberian hak akses spesial kepada "+ds.getNamaByNoInduk(noinduk), haritanggalskrg);
+                } else if (pilihan.equalsIgnoreCase("cabut")) {
+                    ds.insertLog(iduser, "Pencabutan hak akses spesial kepada "+ds.getNamaByNoInduk(noinduk), haritanggalskrg);
+                }
             } else {
                 output.println(false);
             }
